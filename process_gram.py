@@ -49,7 +49,7 @@ for line in open(file_name, 'r'):
 
 # The dictionary 'labels' is converted into a list object
 labels=[labels[i] for i in range(0,d)]
-
+##############
 print(labels)
 print("============================================")
 #print(gram_mat_func)
