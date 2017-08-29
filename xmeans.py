@@ -132,6 +132,7 @@ class xmeans:
             # self.__centers = [ [random.random() for _ in range(len(data[0])) ] ];
             # [Marco Revise] Randomly selected center (It shall be index instead of coordinates)
             self.__centers = random.sample(range(len(data[0])), min(len(data[0]), int(kmax/2)));
+            # print("debug centers: ", self.__centers);
 
         self.__kmax = kmax;
         self.__tolerance = tolerance;
@@ -160,19 +161,22 @@ class xmeans:
             self.__centers = self.__update_centers(self.__clusters);
         else:
             self.__clusters = [];
-            while ( len(self.__centers) < self.__kmax ):
-                current_cluster_number = len(self.__centers);
+            # [Marco Note] revise improving parameters
+            (self.__clusters, self.__centers) = self.__improve_parameters(self.__centers);
 
-                # [Marco Note] revise improving parameters
-                (self.__clusters, self.__centers) = self.__improve_parameters(self.__centers);
-
-                # [Marco Note] revise improving structure to see whether to update the center or not
-                allocated_centers = self.__improve_structure(self.__clusters, self.__centers);
-
-                if ( (current_cluster_number == len(allocated_centers)) ):
-                    break;
-                else:
-                    self.__centers = allocated_centers;
+            # while ( len(self.__centers) < self.__kmax ):
+            #     current_cluster_number = len(self.__centers);
+            #
+            #     # [Marco Note] revise improving parameters
+            #     (self.__clusters, self.__centers) = self.__improve_parameters(self.__centers);
+            #
+            #     # [Marco Note] revise improving structure to see whether to update the center or not
+            #     allocated_centers = self.__improve_structure(self.__clusters, self.__centers);
+            #
+            #     if ( (current_cluster_number == len(allocated_centers)) ):
+            #         break;
+            #     else:
+            #         self.__centers = allocated_centers;
 
 
     def get_clusters(self):
@@ -257,7 +261,8 @@ class xmeans:
             clusters = [ cluster for cluster in clusters if len(cluster) > 0 ];
 
             updated_centers = self.__update_centers(clusters);
-
+            # print("debug clusters:", clusters)
+            # print("debug centers", updated_centers)
             # changes = max([euclidean_distance_sqrt(centers[index], updated_centers[index]) for index in range(len(updated_centers))]);    # Fast solution
 
             # [Marco Revise] to use gram matrix to Calculate distance instead of euclidean
@@ -301,7 +306,8 @@ class xmeans:
                     if distance_to_center > 0.0 and distance_to_center < min_distance_to_center:
                         min_distance_to_center = distance_to_center;
                         possible_child_center = cur_cluster[index_point_in_cluster];
-                parent_child_centers.append(possible_child_center);
+                if possible_child_center > -1:
+                    parent_child_centers.append(possible_child_center);
 
             parent_child_centers.append(centers[index_cluster]);
 
@@ -434,7 +440,8 @@ class xmeans:
         scores = [float('inf')] * len(clusters)     # splitting criterion
         # dimension = len(self.__pointer_data[0]);
         # [Marco Revise] : Use gram_matrix instead, therefore, no need dimension
-
+        dimension = len(self.__gram_matrix[0]);
+        # print("debug: ", len(self.__gram_matrix[0]), len(self.__gram_matrix))
 
         # estimation of the noise variance in the data set
         sigma_sqrt = 0.0;
@@ -514,7 +521,7 @@ class xmeans:
 
         @return (list) Updated centers.
 
-        [Marco revise] I have heavily revise this function
+        [Marco revise] I have heavily revised this function
         Now within the cluster the new center point is the index where it is the shortest distance to all points
         """
 
@@ -532,15 +539,15 @@ class xmeans:
 
         # [Marco revise] find the center point index with the minimum distance to all others
         for index in range(len(clusters)):
-            min_distance = float('inf');
+            min_distance = numpy.Inf; #float('inf');
             cur_cluster = clusters[index];
             for i in range(len(cur_cluster)):
                 cur_distance_sum = 0.0;
                 for j in range(len(cur_cluster)):
-                    cur_distance_sum = cur_distance_sum + self.__gram_matrix[cur_cluster[i]][cur_cluster[j]]
+                    cur_distance_sum = cur_distance_sum + self.__gram_matrix_distance(cur_cluster[i], cur_cluster[j]);
                 if cur_distance_sum < min_distance :
-                    min_distance = cur_distance_sum
-                    centers[index] = cur_cluster[i]
+                    min_distance = cur_distance_sum;
+                    centers[index] = cur_cluster[i];
 
 
         return centers;
