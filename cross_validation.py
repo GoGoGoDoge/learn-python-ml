@@ -56,9 +56,6 @@ for line in open(file_name, 'r'):
 # The dictionary 'labels' is converted into a list object
 labels=[labels[i] for i in range(0,d)]
 
-
-
-
 '''
 ************************ End of kernel file processing *************************
 '''
