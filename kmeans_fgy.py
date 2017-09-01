@@ -171,28 +171,6 @@ class kmeans:
 
         return type_encoding.CLUSTER_INDEX_LIST_SEPARATION;
 
-'''
-    # [Marco Revise] create two methods to take place of euclidean_distance_sqrt and euclidean_distance
-    def __gram_matrix_distance(self, point_a_index, point_b_index):
-        """!
-        @param[in] point_a_index in the gram matrix
-        @param[in] point_b_index in the gram matrix
-
-        @return euclidean_distance kernel of point_a_index and point_b_index based on gram_matrix
-        """
-        return self.__gram_matrix[point_a_index][point_a_index] + self.__gram_matrix[point_b_index][point_b_index] - 2 * self.__gram_matrix[point_a_index][point_b_index];
-
-    def __gram_matrix_distance_sqrt(self, point_a_index, point_b_index):
-        """!
-        @param[in] point_a_index in the gram matrix
-        @param[in] point_b_index in the gram matrix
-
-        @return euclidean_distance_sqrt kernel of point_a_index and point_b_index based on gram_matrix
-        """
-        # print("pa:", point_a_index, "pb:", point_b_index);
-        return numpy.sqrt(self.__gram_matrix_distance(point_a_index, point_b_index));
-'''
-
     def __improve_parameters(self, centers, available_indexes = None):
         """!
         @brief Performs k-means clustering in the specified region.
