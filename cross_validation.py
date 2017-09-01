@@ -5,21 +5,36 @@ import math
 
 cv = 5
 
+def innerP2distance(gm_):
+    l = len(gm_[0])
+    dm_ = [[0 for x in range(l)] for y in range(l)]
+    for i in range(l):
+        for j in range(ll):
+            dm_[i][j] = math.sqrt(gm_[i][i] + gm_[j][j] - 2 * gm_[i][j])
+
+    return dm_
+
+
+
 def partition2train(gm_, i_, cv_):
 
 def get_testing_indices(gm_, i_, cv_):
 
-def cv_score(alpha=1., beta=0., k=5):
+def neg_cv_score(alpha=1., beta=0., k=5):
+    '''
     # Performs cross validation on a gram matrix of training data and
     # returns the averaged accuracy scores.
     # The gram matrix 'gm' is generated from 'get_elmnt'.
-    # The number of folds is specivied by the variable 'cv'.
-    gm=[[get_elmnt(i,j).subs([(x,alpha),(y,beta)]) for j in range(d)] for i in range(d)]
-
+    # The number of folds is specified by the variable 'cv'.
+    '''
+    gm = [[get_elmnt(i,j).subs([(x,alpha),(y,beta)]) for j in range(d)] for i in range(d)]
+    dm = innerP2distance(gm) # this is the pairwise distance matrix
+    confusion_mat = {}
+    confusion_mat_sum = [[0,0],[0,0]]
     for i in range(0,cv):
-        gm_train = partition2train(gm, i, cv) # a sub matrix extracted from the gm
-        indices_test = get_testing_indices(gm, i, cv) # array of indices of the testing data points
-        confusion_mat = [[0,0],[0,0]]
+        dm_train = partition2train(dm, i, cv) # a sub matrix extracted from the dm
+        indices_test = get_testing_indices(dm, i, cv) # array of indices of the testing data points
+        confusion_mat[i] = [[0,0],[0,0]] # [ [TN, FP], [FN, TP] ]
         # do clustering using the assigned k, output: list of {set of indices belonging to same cluster}
             # should return e.g. cluster_indices_set
 
@@ -30,7 +45,7 @@ def cv_score(alpha=1., beta=0., k=5):
             for single_cluster[i] in cluster_indices_set:
                 # sum of the squared distance from the test point to all points in the cluster
                 avg_distance2cluster[i] = sum(...)
-                avg_distance2cluster[i] = sqrt(avg_distance2cluster[i])
+                avg_distance2cluster[i] = math.sqrt(avg_distance2cluster[i])
                 avg_distance2cluster[i] /= number of points in the cluster
 
             # sort the avg_distance2cluster and find the shortest avg distance, get index of the nearest cluster
@@ -39,10 +54,19 @@ def cv_score(alpha=1., beta=0., k=5):
 
             # determine whether this test data is fp, fn, tp, tn and add to the confusion_mat
 
-    # after all folds are done, add up the confusion_mat
+            # after all folds are done, add up the confusion_mat
+            '''
+            To obtain a “unified” matrix, you have only to perform addition of matrices.
+            That is, individual fold confusion matrix are 2x2, and the unified confusion matrix is 2x2 as well.
+            Note that every datum in a dataset is tested exactly one time through the entire folds,
+            and hence, appears exactly one in some element of the unified matrix.
+            Therefore, the unified confusion matrix looks as if the entire dataset were used as a test dataset.
+            '''
+            confusion_mat_sum = confusion_mat_sum + confusion_mat[i]
     # then compute the score using the combined confusion matrix, e.g. use accuracy.
-
-
+    accuracy = (confusion_mat_sum[0][0]+confusion_mat_sum[1][1])/(confusion_mat_sum[0][0]+confusion_mat_sum[0][1]+confusion_mat_sum[1][0]+confusion_mat_sum[1][1])
+    return -accuracy
+'''
 def neg_cv_score(x):
     # print('### neg_cv_score: {0}'.format(x))
     alpha, beta, k = x[:,0], x[:,1], x[:,2]
@@ -51,6 +75,7 @@ def neg_cv_score(x):
     for i in range(n):
         score[i] = - cv_score(alpha[i], beta[i], k[i])
     return score
+'''
 
 import GPy
 import GPyOpt
