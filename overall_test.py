@@ -4,7 +4,7 @@ from pyclustering.samples.definitions import SIMPLE_SAMPLES, FCPS_SAMPLES;
 
 from pyclustering.cluster import cluster_visualizer;
 # from pyclustering.cluster.xmeans import xmeans, splitting_type;
-from xmeans import xmeans, splitting_type
+from kmeans_fgy import kmeans # , splitting_type
 from pyclustering.utils import read_sample, timedcall;
 p=re.compile(r'(\d)([xy])')
 q=re.compile(r'xy')
@@ -65,14 +65,26 @@ for i in range(d):
     for j in range(d):
         gram_num[i][j] = float(get_elmnt(i, j).subs([(x,0.5), (y,0.3)]))
 
-# print(gram_num)
+
+
+def innerP2distance(gm_):
+    l = len(gm_[0])
+    dm_ = [[0 for x in range(l)] for y in range(l)]
+    for i in range(l):
+        for j in range(ll):
+            dm_[i][j] = math.sqrt(gm_[i][i] + gm_[j][j] - 2 * gm_[i][j])
+
+    return dm_
+
+dm = innerP2distance(gram_num)
+print(dm)
 
 # xmeans_instance = xmeans(gram_matrix, None, 20, 0.025, splitting_type.BAYESIAN_INFORMATION_CRITERION, False);
-xmeans_instance = xmeans(gram_num, None, 10, 0.025, splitting_type.BAYESIAN_INFORMATION_CRITERION, False);
-(ticks, result) = timedcall(xmeans_instance.process);
+kmeans_instance = kmeans(dm, None, 10, 0.025);
+(ticks, result) = timedcall(kmeans_instance.process);
 
-clusters = xmeans_instance.get_clusters();
-centers = xmeans_instance.get_centers();
+clusters = kmeans_instance.get_clusters();
+centers = kmeans_instance.get_centers();
 
 print ("finish...")
 print ("centers:", centers)

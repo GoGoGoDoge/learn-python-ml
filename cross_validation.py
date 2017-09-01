@@ -3,7 +3,7 @@ import re
 from pyclustering.samples.definitions import SIMPLE_SAMPLES, FCPS_SAMPLES;
 
 # from pyclustering.cluster import cluster_visualizer;
-from xmeans import xmeans, splitting_type
+from kmeans_fgy import kmeans # , splitting_type
 from pyclustering.utils import read_sample, timedcall;
 
 p=re.compile(r'(\d)([xy])')
@@ -99,6 +99,7 @@ def neg_cv_score(alpha=1., beta=0., k=5):
         confusion_mat[i] = [[0,0],[0,0]] # [ [TN, FP], [FN, TP] ]
         # do clustering using the assigned k, output: list of {set of indices belonging to same cluster}
             # should return e.g. cluster_indices_set
+        kmeans_instance = kmeans(dm, None, 10, 0.025);
 
         # use known labels to vote for the label of the cluster
 
