@@ -3,7 +3,7 @@ import re
 from pyclustering.samples.definitions import SIMPLE_SAMPLES, FCPS_SAMPLES;
 
 # from pyclustering.cluster import cluster_visualizer;
-# from pyclustering.cluster.xmeans import xmeans, splitting_type;
+from pyclustering.cluster.xmeans import xmeans, splitting_type;
 from xmeans import xmeans, splitting_type
 from pyclustering.utils import read_sample, timedcall;
 p=re.compile(r'(\d)([xy])')
