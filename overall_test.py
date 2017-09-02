@@ -9,6 +9,13 @@ from pyclustering.utils import read_sample, timedcall;
 import math
 import sympy
 
+# from sklearn.model_selection import cross_val_score
+# from sklearn import svm
+# import numpy as np
+import GPy
+import GPyOpt
+
+
 p=re.compile(r'(\d)([xy])')
 q=re.compile(r'xy')
 
@@ -63,9 +70,11 @@ print("============================================")
 # print(gram_mat_func)
 gram_num = [[0 for a in range(d)] for b in range(d)]
 # print(gram_num)
+alpha = 0.5
+beta = 0.3
 for i in range(d):
     for j in range(d):
-        gram_num[i][j] = float(get_elmnt(i, j).subs([(x,0.5), (y,0.3)]))
+        gram_num[i][j] = float(get_elmnt(i, j).subs([(x,alpha), (y,beta)]))
 
 
 

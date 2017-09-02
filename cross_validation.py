@@ -133,7 +133,7 @@ def neg_cv_score(alpha=1., beta=0., k=5):
         confusion_mat[i] = [[0,0],[0,0]] # [ [TN, FP], [FN, TP] ]
 
         # do clustering using the assigned k, output: list of {set of indices belonging to same cluster}
-        kmeans_instance = kmeans(dm_train, None, 10, 0.025)
+        kmeans_instance = kmeans(dm_train, None, k, 0.025)
         clusters = kmeans_instance.get_clusters()
         centers = kmeans_instance.get_centers()
 
