@@ -77,10 +77,11 @@ def neg_cv_score(alpha=1., beta=0., k=5):
     # The gram matrix 'gm' is generated from 'get_elmnt'.
     # The number of folds is specified by the variable 'cv'.
     '''
+    print("This is neg_cv_score...")
     gm = [[0 for aa in range(d)] for bb in range(d)]
     for i in range(d):
         for j in range(d):
-            gm[i][j] = float(get_elmnt(i, j).subs([(x,alpha), (y,beta)]))
+            gm[i][j] = get_elmnt(i, j).subs([(x,alpha), (y,beta)])
 
     dm = innerP2distance(gm) # this is the pairwise distance matrix
     confusion_mat = {}
