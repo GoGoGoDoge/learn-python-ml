@@ -6,6 +6,8 @@ from pyclustering.cluster import cluster_visualizer;
 # from pyclustering.cluster.xmeans import xmeans, splitting_type;
 from kmeans_fgy import kmeans
 from pyclustering.utils import read_sample, timedcall;
+import math
+
 p=re.compile(r'(\d)([xy])')
 q=re.compile(r'xy')
 
