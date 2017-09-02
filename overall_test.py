@@ -91,5 +91,23 @@ centers = kmeans_instance.get_centers();
 print ("finish...")
 print ("centers:", centers)
 print ("clusters:", clusters)
-print(clusters[1][2])
-print(clusters[1][3])
+print("clusters[1][2]: ", clusters[1][2])
+print("clusters[1][3]: ", clusters[1][3])
+
+nClusters = len(centers)
+cluster_labels = [0 for x in range(nClusters)]
+for i in range(0, nClusters):
+    nPoints = len(clusters[i][:])
+    nPos = 0
+    nNeg = 0
+    for j in range(0, nPoints):
+        if labels[cluster[i][j]] == "+1":
+            nPos = nPos + 1
+        else:
+            nNeg = nNeg + 1
+    if nPos > nNeg:
+        cluster_labels[i] = 1
+    else:
+        cluster_labels[i] = -1
+
+print(cluster_labels)

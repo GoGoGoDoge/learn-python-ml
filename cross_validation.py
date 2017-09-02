@@ -68,19 +68,46 @@ import math
 cv = 5
 
 def innerP2distance(gm_):
-    l = len(gm_[0])
+    l = d
     dm_ = [[0 for x in range(l)] for y in range(l)]
     for i in range(l):
-        for j in range(ll):
+        for j in range(l):
             dm_[i][j] = math.sqrt(gm_[i][i] + gm_[j][j] - 2 * gm_[i][j])
 
     return dm_
 
 
+len_portion = math.ceil(d/cv)
+remain_portion_len = d%cv
+train_len = (cv-1)*len_portion
 
-def partition2train(gm_, i_, cv_):
+def partition2train(dm_, i_):
+    if i_ < cv-1:
+        dm_train_ = [[0 for x in range(train_len)] for y in range(train_len)]
+    else:
+        dm_train_ = [[0 for x in range(d-remain_portion_len)] for y in range(d-remain_portion_len)]
 
-def get_testing_indices(gm_, i_, cv_):
+    testing_indices_ = get_testing_indices(i_)
+    lt = len(testing_indices_)
+    iii = 0
+    jjj = 0
+    for ii in range(d):
+        if ii < testing_indices_[0] || ii > testing_indices_[lt-1]:
+            for jj in range(d):
+                if jj < testing_indices_[0] || jj > testing_indices_[lt-1]:
+                    dm_train_[iii][jjj] = dm[ii][jj]
+                    jjj = jjj + 1
+            iii = iii + 1
+    return dm_train_
+
+def get_testing_indices(i_):
+    index_start = i_*len_portion
+    if i_ < cv-1:
+        index_end = index_start + len_portion # this last index is not used it is [) range
+    else:
+        index_end = d
+
+    return range(index_start, index_end) # start <= idx <= end-1
 
 def neg_cv_score(alpha=1., beta=0., k=5):
     '''
@@ -94,14 +121,20 @@ def neg_cv_score(alpha=1., beta=0., k=5):
     confusion_mat = {}
     confusion_mat_sum = [[0,0],[0,0]]
     for i in range(0,cv):
-        dm_train = partition2train(dm, i, cv) # a sub matrix extracted from the dm
-        indices_test = get_testing_indices(dm, i, cv) # array of indices of the testing data points
+        dm_train = partition2train(dm, i) # a sub matrix extracted from the dm
+        indices_test = get_testing_indices(i) # array of indices of the testing data points
         confusion_mat[i] = [[0,0],[0,0]] # [ [TN, FP], [FN, TP] ]
         # do clustering using the assigned k, output: list of {set of indices belonging to same cluster}
             # should return e.g. cluster_indices_set
-        kmeans_instance = kmeans(dm, None, 10, 0.025);
-
+        kmeans_instance = kmeans(dm_train, None, 10, 0.025);
+        clusters = kmeans_instance.get_clusters();
+        centers = kmeans_instance.get_centers();
         # use known labels to vote for the label of the cluster
+
+        nClusters = len(centers)
+        cluster_labels = [0 for x in range(nClusters)]
+        for i in range(0, nClusters):
+
 
         # do testing by finding the nearest cluster for the remaining points
         for index in indices_test:
