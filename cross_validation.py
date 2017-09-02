@@ -90,9 +90,10 @@ def neg_cv_score(alpha=1., beta=0., k=5):
     gm = [[0 for aa in range(d)] for bb in range(d)]
     for i in range(d):
         for j in range(d):
-            gm[i][j] = get_elmnt_and_sub(i, j, alpha, beta)
+            gm[i][j] = float(get_elmnt_and_sub(i, j, alpha, beta))
+            # gm[i][j] = float(get_elmnt(i, j).subs([(x,alpha), (y,beta)]))
             # gm[i][j] = get_elmnt(i, j).subs([(x,alpha), (y,beta)])
-
+    print(gm)
     dm = innerP2distance(gm) # this is the pairwise distance matrix
     confusion_mat = {}
     confusion_mat_sum = [[0,0],[0,0]]
