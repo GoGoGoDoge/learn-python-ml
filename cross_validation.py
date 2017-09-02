@@ -122,43 +122,77 @@ def neg_cv_score(alpha=1., beta=0., k=5):
     confusion_mat_sum = [[0,0],[0,0]]
     for i in range(0,cv):
         dm_train = partition2train(dm, i) # a sub matrix extracted from the dm
-        indices_test = get_testing_indices(i) # array of indices of the testing data points
+        test_indices = get_testing_indices(i) # array of indices of the testing data points
         confusion_mat[i] = [[0,0],[0,0]] # [ [TN, FP], [FN, TP] ]
-        # do clustering using the assigned k, output: list of {set of indices belonging to same cluster}
-            # should return e.g. cluster_indices_set
-        kmeans_instance = kmeans(dm_train, None, 10, 0.025);
-        clusters = kmeans_instance.get_clusters();
-        centers = kmeans_instance.get_centers();
-        # use known labels to vote for the label of the cluster
 
+        # do clustering using the assigned k, output: list of {set of indices belonging to same cluster}
+        kmeans_instance = kmeans(dm_train, None, 10, 0.025)
+        clusters = kmeans_instance.get_clusters()
+        centers = kmeans_instance.get_centers()
+        
+        # use known labels to vote for the label of the cluster
         nClusters = len(centers)
         cluster_labels = [0 for x in range(nClusters)]
         for i in range(0, nClusters):
+            nPoints = len(clusters[i][:])
+            nPos = 0
+            nNeg = 0
+            for j in range(0, nPoints):
+                if labels[clusters[i][j]] == "+1":
+                    nPos = nPos + 1
+                else:
+                    nNeg = nNeg + 1
+            print("For i th cluster, +1 v.s. -1 is: ", i, nPos, nNeg)
+            if nPos > nNeg:
+                cluster_labels[i] = 1
+            else:
+                cluster_labels[i] = -1
 
+        print(cluster_labels)
 
         # do testing by finding the nearest cluster for the remaining points
-        for index in indices_test:
-            for single_cluster[i] in cluster_indices_set:
-                # sum of the squared distance from the test point to all points in the cluster
-                avg_distance2cluster[i] = sum(...)
-                avg_distance2cluster[i] = math.sqrt(avg_distance2cluster[i])
-                avg_distance2cluster[i] /= number of points in the cluster
+        for test_i in test_indices:
+            min_distance = numpy.Inf
+            min_dist_cluster_idx = -1
+            dist_2_cluster = 0
+            for i in range(0, nClusters):
+                cur_cluster = clusters[i][:];
+                nPointsInCluster = len(cur_cluster)
+                for j in range(0, nPointsInCluster):
+                    tmp = dm[test_i][cur_cluster[j]]
+                    tmp = tmp*tmp
+                    dist_2_cluster = dist_2_cluster + tmp
+                dist_2_cluster = math.sqrt(dist_2_cluster)
+                dist_2_cluster = dist_2_cluster/nPointsInCluster
 
-            # sort the avg_distance2cluster and find the shortest avg distance, get index of the nearest cluster
-
-            # determine the label of the tested data by the label of the nearest cluster
-
+                if dist_2_cluster < min_distance:
+                    min_distance = dist_2_cluster
+                    min_dist_cluster_idx = i
             # determine whether this test data is fp, fn, tp, tn and add to the confusion_mat
+            # TN = confusion_mat[i][0][0]
+            # FP = confusion_mat[i][0][1]
+            # FN = confusion_mat[i][1][0]
+            # TP = confusion_mat[i][1][1]
+            if labels[test_i] == "+1":
+                if cluster_labels[min_dist_cluster_idx] == "+1":
+                    confusion_mat[i][1][1] = confusion_mat[i][1][1] + 1
+                else:
+                    confusion_mat[i][1][0] = confusion_mat[i][1][0] + 1
+            else:
+                if cluster_labels[min_dist_cluster_idx] == "+1":
+                    confusion_mat[i][0][1] = confusion_mat[i][0][1] + 1
+                else:
+                    confusion_mat[i][0][0] = confusion_mat[i][0][0] + 1
 
-            # after all folds are done, add up the confusion_mat
-            '''
-            To obtain a “unified” matrix, you have only to perform addition of matrices.
-            That is, individual fold confusion matrix are 2x2, and the unified confusion matrix is 2x2 as well.
-            Note that every datum in a dataset is tested exactly one time through the entire folds,
-            and hence, appears exactly one in some element of the unified matrix.
-            Therefore, the unified confusion matrix looks as if the entire dataset were used as a test dataset.
-            '''
-            confusion_mat_sum = confusion_mat_sum + confusion_mat[i]
+        # after all folds are done, add up the confusion_mat
+        '''
+        To obtain a “unified” matrix, you have only to perform addition of matrices.
+        That is, individual fold confusion matrix are 2x2, and the unified confusion matrix is 2x2 as well.
+        Note that every datum in a dataset is tested exactly one time through the entire folds,
+        and hence, appears exactly one in some element of the unified matrix.
+        Therefore, the unified confusion matrix looks as if the entire dataset were used as a test dataset.
+        '''
+        confusion_mat_sum = confusion_mat_sum + confusion_mat[i]
     # then compute the score using the combined confusion matrix, e.g. use accuracy.
     accuracy = (confusion_mat_sum[0][0]+confusion_mat_sum[1][1])/(confusion_mat_sum[0][0]+confusion_mat_sum[0][1]+confusion_mat_sum[1][0]+confusion_mat_sum[1][1])
     return -accuracy
@@ -183,7 +217,8 @@ domain=[{'name':'alpha', 'type':'continuous', 'domain':(0,1)},
 #        {'name':'gamma', 'type':'continuous', 'domain':(1.0e-3,1.0e3)}]
 bo=GPyOpt.methods.BayesianOptimization(f=neg_cv_score,domain=domain)
 # bo=GPyOpt.methods.BayesianOptimization(f=neg_cv_score,domain=domain,acquisition_type='LCB')
-bo.run_optimization(max_iter=30)
+# bo.run_optimization(max_iter=30)
+bo.run_optimization(max_iter=3)
 
 bo.x_opt # Optimal solutions.
 bo.fx_opt # Found minimum values.

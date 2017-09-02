@@ -105,7 +105,7 @@ for i in range(0, nClusters):
             nPos = nPos + 1
         else:
             nNeg = nNeg + 1
-    print("For i th cluster, +1 v.s. -1", i, nPos, nNeg)
+    print("For i th cluster, +1 v.s. -1: ", i, nPos, nNeg)
     if nPos > nNeg:
         cluster_labels[i] = 1
     else:
