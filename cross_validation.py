@@ -41,10 +41,9 @@ def get_elmnt_and_sub(i, j, alpha, beta):
         return None
 
 def innerP2distance(gm_):
-    l = d
-    dm_ = [[0 for x in range(l)] for y in range(l)]
-    for i in range(l):
-        for j in range(l):
+    dm_ = [[0 for aa in range(d)] for bb in range(d)]
+    for i in range(d):
+        for j in range(d):
             dm_[i][j] = math.sqrt(gm_[i][i] + gm_[j][j] - 2 * gm_[i][j])
 
     return dm_
@@ -90,7 +89,7 @@ def neg_cv_score(alpha=1., beta=0., k=5):
     gm = [[0 for aa in range(d)] for bb in range(d)]
     for i in range(d):
         for j in range(d):
-            gm[i][j] = float(get_elmnt_and_sub(i, j, alpha, beta))
+            gm[i][j] = get_elmnt_and_sub(i, j, alpha, beta)
             # gm[i][j] = float(get_elmnt(i, j).subs([(x,alpha), (y,beta)]))
             # gm[i][j] = get_elmnt(i, j).subs([(x,alpha), (y,beta)])
     print(gm)
