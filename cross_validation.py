@@ -64,7 +64,7 @@ def partition2train(dm_, i_):
         if ii < testing_indices_[0] or ii > testing_indices_[lt-1]:
             for jj in range(d):
                 if jj < testing_indices_[0] or jj > testing_indices_[lt-1]:
-                    dm_train_[iii][jjj] = dm[ii][jj]
+                    dm_train_[iii][jjj] = dm_[ii][jj]
                     jjj = jjj + 1
             iii = iii + 1
     return dm_train_
