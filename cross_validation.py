@@ -243,3 +243,4 @@ bo.run_optimization(max_iter=3)
 
 bo.x_opt # Optimal solutions.
 bo.fx_opt # Found minimum values.
+'''
