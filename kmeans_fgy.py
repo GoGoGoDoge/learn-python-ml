@@ -223,7 +223,7 @@ class kmeans:
         if (available_indexes is None):
             # bypass = range(len(self.__pointer_data));
             # [Marco revise]: now bypass based on the gram_matrix len and we will not specified available_indexes
-            bypass = range(len(self.__gram_matrix));
+            bypass = range(len(self.__dist_matrix));
         else:
             bypass = available_indexes;
 
@@ -236,7 +236,7 @@ class kmeans:
                 # dist = euclidean_distance(data[index_point], centers[index]);         # Slow solution
                 # dist = euclidean_distance_sqrt(self.__pointer_data[index_point], centers[index]);      # Fast solution
                 # [Marco revise] : I will use Fast solution but change the dict is represented by gram_matrix
-                dist = self.__gram_matrix_distance_sqrt(index_point, centers[index]);
+                dist = self.__dist_matrix[index_point][centers[index]];
                 if ( (dist < dist_optim) or (index is 0)):
                     index_optim = index;
                     dist_optim = dist;
@@ -269,7 +269,9 @@ class kmeans:
             for i in range(len(cur_cluster)):
                 cur_distance_sum = 0.0;
                 for j in range(len(cur_cluster)):
-                    cur_distance_sum = cur_distance_sum + self.__gram_matrix_distance(cur_cluster[i], cur_cluster[j]);
+                    tmp = self.__dist_matrix[cur_cluster[i]][cur_cluster[j]]
+                    tmp = tmp*tmp
+                    cur_distance_sum = cur_distance_sum + tmp;
                 if cur_distance_sum < min_distance :
                     min_distance = cur_distance_sum;
                     centers[index] = cur_cluster[i];
