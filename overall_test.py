@@ -71,7 +71,7 @@ def innerP2distance(gm_):
     l = len(gm_[0])
     dm_ = [[0 for x in range(l)] for y in range(l)]
     for i in range(l):
-        for j in range(ll):
+        for j in range(l):
             dm_[i][j] = math.sqrt(gm_[i][i] + gm_[j][j] - 2 * gm_[i][j])
 
     return dm_
