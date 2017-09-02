@@ -101,7 +101,7 @@ for i in range(0, nClusters):
     nPos = 0
     nNeg = 0
     for j in range(0, nPoints):
-        if labels[cluster[i][j]] == "+1":
+        if labels[clusters[i][j]] == "+1":
             nPos = nPos + 1
         else:
             nNeg = nNeg + 1
