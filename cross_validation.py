@@ -10,8 +10,8 @@ import sympy
 # from sklearn import svm
 # import numpy as np
 import math
-import GPy
-import GPyOpt
+# import GPy
+# import GPyOpt
 
 
 def insert_ast(s):
@@ -227,6 +227,9 @@ len_portion = math.ceil(d/cv)
 remain_portion_len = d%cv
 train_len = (cv-1)*len_portion
 
+neg_cv_score(0.5, 0.3, 5)
+
+'''
 domain=[{'name':'alpha', 'type':'continuous', 'domain':(0,1)},
         {'name':'beta', 'type':'continuous', 'domain':(0,1)},
         {'name':'k', 'type':'continuous', 'domain':(2,50)}]
