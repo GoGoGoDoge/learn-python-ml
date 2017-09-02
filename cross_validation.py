@@ -52,7 +52,7 @@ def innerP2distance(gm_):
 
 def partition2train(dm_, i_):
     if i_ < cv-1:
-        dm_train_ = [[0 for x in range(train_len)] for y in range(train_len)]
+        dm_train_ = [[0 for x in range(d-len_portion)] for y in range(d-len_portion)]
     else:
         dm_train_ = [[0 for x in range(d-remain_portion_len)] for y in range(d-remain_portion_len)]
 
@@ -60,9 +60,9 @@ def partition2train(dm_, i_):
     lt = len(testing_indices_)
     iii = 0
     jjj = 0
-    for ii in range(d):
+    for ii in range(0,d):
         if ii < testing_indices_[0] or ii > testing_indices_[lt-1]:
-            for jj in range(d):
+            for jj in range(0,d):
                 if jj < testing_indices_[0] or jj > testing_indices_[lt-1]:
                     dm_train_[iii][jjj] = dm_[ii][jj]
                     jjj = jjj + 1
@@ -94,9 +94,11 @@ def neg_cv_score(alpha=1., beta=0., k=5):
             # gm[i][j] = get_elmnt(i, j).subs([(x,alpha), (y,beta)])
     print(gm)
     dm = innerP2distance(gm) # this is the pairwise distance matrix
+    print("size of dm:", len(dm[0][:]), len(dm))
     confusion_mat = {}
     confusion_mat_sum = [[0,0],[0,0]]
     for i in range(0,cv):
+        print("No. i fold: ", i)
         dm_train = partition2train(dm, i) # a sub matrix extracted from the dm
         test_indices = get_testing_indices(i) # array of indices of the testing data points
         confusion_mat[i] = [[0,0],[0,0]] # [ [TN, FP], [FN, TP] ]
@@ -224,7 +226,7 @@ labels=[labels[i] for i in range(0,d)]
 cv = 5
 
 len_portion = math.ceil(d/cv)
-remain_portion_len = d%cv
+remain_portion_len = d - (cv-1)*len_portion
 train_len = (cv-1)*len_portion
 
 neg_cv_score(0.5, 0.3, 5)
