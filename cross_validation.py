@@ -5,6 +5,13 @@ from pyclustering.samples.definitions import SIMPLE_SAMPLES, FCPS_SAMPLES;
 # from pyclustering.cluster import cluster_visualizer;
 from kmeans_fgy import kmeans # , splitting_type
 from pyclustering.utils import read_sample, timedcall;
+import sympy
+# from sklearn.model_selection import cross_val_score
+# from sklearn import svm
+# import numpy as np
+import math
+import GPy
+import GPyOpt
 
 p=re.compile(r'(\d)([xy])')
 q=re.compile(r'xy')
@@ -13,7 +20,6 @@ def insert_ast(s):
     # Inserts asterisks * for sympy: xy -> x*y, 3x -> 3*x
     return re.sub(q, r'x*y', re.sub(p, r'\1*\2', s))
 
-import sympy
 x,y=sympy.symbols("x y")
 
 file_name = 'colon-cancer.kernel'
@@ -60,10 +66,7 @@ labels=[labels[i] for i in range(0,d)]
 ************************ End of kernel file processing *************************
 '''
 
-from sklearn.model_selection import cross_val_score
-from sklearn import svm
-import numpy as np
-import math
+
 
 cv = 5
 
@@ -116,10 +119,11 @@ def neg_cv_score(alpha=1., beta=0., k=5):
     # The gram matrix 'gm' is generated from 'get_elmnt'.
     # The number of folds is specified by the variable 'cv'.
     '''
+    gm = [[0 for x in range(d)] for y in range(d)]
     for i in range(d):
         for j in range(d):
             gm[i][j] = float(get_elmnt(i, j).subs([(x,alpha), (y,beta)]))
-            
+
     dm = innerP2distance(gm) # this is the pairwise distance matrix
     confusion_mat = {}
     confusion_mat_sum = [[0,0],[0,0]]
@@ -210,8 +214,6 @@ def neg_cv_score(x):
     return score
 '''
 
-import GPy
-import GPyOpt
 domain=[{'name':'alpha', 'type':'continuous', 'domain':(0,1)},
         {'name':'beta', 'type':'continuous', 'domain':(0,1)},
         {'name':'k', 'type':'continuous', 'domain':(2,50)}]

@@ -7,6 +7,7 @@ from pyclustering.cluster import cluster_visualizer;
 from kmeans_fgy import kmeans
 from pyclustering.utils import read_sample, timedcall;
 import math
+import sympy
 
 p=re.compile(r'(\d)([xy])')
 q=re.compile(r'xy')
@@ -15,7 +16,6 @@ def insert_ast(s):
     # Inserts asterisks * for sympy: xy -> x*y, 3x -> 3*x
     return re.sub(q, r'x*y', re.sub(p, r'\1*\2', s))
 
-import sympy
 x,y=sympy.symbols("x y")
 
 file_name = 'colon-cancer.kernel'
