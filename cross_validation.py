@@ -52,9 +52,9 @@ def innerP2distance(gm_):
 
 def partition2train(dm_, i_):
     if i_ < cv-1:
-        dm_train_ = [[0 for x in range(d-len_portion)] for y in range(d-len_portion)]
+        dm_train_ = [[0 for aa in range(d-len_portion)] for bb in range(d-len_portion)]
     else:
-        dm_train_ = [[0 for x in range(d-remain_portion_len)] for y in range(d-remain_portion_len)]
+        dm_train_ = [[0 for aa in range(d-remain_portion_len)] for bb in range(d-remain_portion_len)]
 
     testing_indices_ = get_testing_indices(i_)
     lt = len(testing_indices_)
@@ -66,7 +66,9 @@ def partition2train(dm_, i_):
                 if jj < testing_indices_[0] or jj > testing_indices_[lt-1]:
                     dm_train_[iii][jjj] = dm_[ii][jj]
                     jjj = jjj + 1
+                    print("jjj: ", jjj)
             iii = iii + 1
+            print("iii: ", iii)
     return dm_train_
 
 def get_testing_indices(i_):
@@ -225,9 +227,8 @@ labels=[labels[i] for i in range(0,d)]
 
 cv = 5
 
-len_portion = math.ceil(d/cv)
-remain_portion_len = d - (cv-1)*len_portion
-train_len = (cv-1)*len_portion
+len_portion = math.ceil(d/cv) # e.g. 134/5=27
+remain_portion_len = d - (cv-1)*len_portion # e.g. 26
 
 neg_cv_score(0.5, 0.3, 5)
 
