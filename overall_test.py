@@ -79,7 +79,7 @@ def innerP2distance(gm_):
     return dm_
 
 dm = innerP2distance(gram_num)
-print(dm)
+# print(dm)
 
 # xmeans_instance = xmeans(gram_matrix, None, 20, 0.025, splitting_type.BAYESIAN_INFORMATION_CRITERION, False);
 kmeans_instance = kmeans(dm, None, 10, 0.025);
@@ -105,6 +105,7 @@ for i in range(0, nClusters):
             nPos = nPos + 1
         else:
             nNeg = nNeg + 1
+    print("For i th cluster, +1 v.s. -1", i, nPos, nNeg)
     if nPos > nNeg:
         cluster_labels[i] = 1
     else:
