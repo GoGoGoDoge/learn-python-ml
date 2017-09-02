@@ -92,9 +92,9 @@ def partition2train(dm_, i_):
     iii = 0
     jjj = 0
     for ii in range(d):
-        if ii < testing_indices_[0] || ii > testing_indices_[lt-1]:
+        if ii < testing_indices_[0] or ii > testing_indices_[lt-1]:
             for jj in range(d):
-                if jj < testing_indices_[0] || jj > testing_indices_[lt-1]:
+                if jj < testing_indices_[0] or jj > testing_indices_[lt-1]:
                     dm_train_[iii][jjj] = dm[ii][jj]
                     jjj = jjj + 1
             iii = iii + 1
@@ -129,7 +129,7 @@ def neg_cv_score(alpha=1., beta=0., k=5):
         kmeans_instance = kmeans(dm_train, None, 10, 0.025)
         clusters = kmeans_instance.get_clusters()
         centers = kmeans_instance.get_centers()
-        
+
         # use known labels to vote for the label of the cluster
         nClusters = len(centers)
         cluster_labels = [0 for x in range(nClusters)]
