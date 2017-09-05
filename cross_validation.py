@@ -66,9 +66,10 @@ def partition2train(dm_, i_):
                 if jj < testing_indices_[0] or jj > testing_indices_[lt-1]:
                     dm_train_[iii][jjj] = dm_[ii][jj]
                     jjj = jjj + 1
-                    print("jjj: ", jjj)
+                    #print("jjj: ", jjj)
             iii = iii + 1
-            print("iii: ", iii)
+            #print("iii: ", iii)
+            jjj = 0
     return dm_train_
 
 def get_testing_indices(i_):
