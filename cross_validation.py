@@ -9,7 +9,8 @@ import sympy
 # from sklearn.model_selection import cross_val_score
 # from sklearn import svm
 # import numpy as np
-import math
+import numpy
+# import math
 # import GPy
 # import GPyOpt
 
@@ -44,7 +45,7 @@ def innerP2distance(gm_):
     dm_ = [[0 for aa in range(d)] for bb in range(d)]
     for i in range(d):
         for j in range(d):
-            dm_[i][j] = math.sqrt(gm_[i][i] + gm_[j][j] - 2 * gm_[i][j])
+            dm_[i][j] = numpy.sqrt(gm_[i][i] + gm_[j][j] - 2 * gm_[i][j])
 
     return dm_
 
