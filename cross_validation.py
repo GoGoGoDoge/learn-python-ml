@@ -151,7 +151,7 @@ def neg_cv_score(alpha=1., beta=0., k=5):
                     tmp = dm[test_i][cur_cluster[j]]
                     tmp = tmp*tmp
                     dist_2_cluster = dist_2_cluster + tmp
-                dist_2_cluster = math.sqrt(dist_2_cluster)
+                dist_2_cluster = numpy.sqrt(dist_2_cluster)
                 dist_2_cluster = dist_2_cluster/nPointsInCluster
 
                 if dist_2_cluster < min_distance:
@@ -236,7 +236,7 @@ labels=[labels[i] for i in range(0,d)]
 
 cv = 5
 
-len_portion = math.ceil(d/cv) # e.g. 134/5=27
+len_portion = numpy.ceil(d/cv) # e.g. 134/5=27
 remain_portion_len = d - (cv-1)*len_portion # e.g. 26
 
 alpha = 0.5
