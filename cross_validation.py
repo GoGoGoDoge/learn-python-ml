@@ -124,7 +124,8 @@ def neg_cv_score(alpha=1., beta=0., k=5):
         kmeans_instance = kmeans(float_dm_train, None, k, 0.025)
         clusters = kmeans_instance.get_clusters()
         centers = kmeans_instance.get_centers()
-        print ("clusters: ", clusters)
+        print("clusters: ", clusters)
+        input("enter something...")
         print("clusters[1][2]: ", clusters[1][2])
         print("clusters[1][3]: ", clusters[1][3])
         # use known labels to vote for the label of the cluster
