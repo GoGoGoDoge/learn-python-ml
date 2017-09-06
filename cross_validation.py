@@ -41,37 +41,37 @@ def get_elmnt_and_sub(i, j, alpha, beta):
     else:
         return None
 
-def innerP2distance(gm_):
-    dm_ = [[0 for aa in range(d)] for bb in range(d)]
+def innerP2distance(_gm):
+    _dm = [[0 for aa in range(d)] for bb in range(d)]
     for i in range(d):
         for j in range(d):
-            dm_[i][j] = numpy.sqrt(gm_[i][i] + gm_[j][j] - 2 * gm_[i][j])
+            _dm[i][j] = numpy.sqrt(_gm[i][i] + _gm[j][j] - 2 * _gm[i][j])
 
-    return dm_
+    return _dm
 
 
 
-def partition2train(dm_, _i):
+def partition2train(_dm, _i):
     if _i < cv-1:
-        dm_train_ = [[0 for aa in range(d-len_portion)] for bb in range(d-len_portion)]
+        _dm_train = [[0 for aa in range(d-len_portion)] for bb in range(d-len_portion)]
     else:
-        dm_train_ = [[0 for aa in range(d-remain_portion_len)] for bb in range(d-remain_portion_len)]
+        _dm_train = [[0 for aa in range(d-remain_portion_len)] for bb in range(d-remain_portion_len)]
 
-    testing_indices_ = get_testing_indices(_i)
-    lt = len(testing_indices_)
+    _testing_indices = get_testing_indices(_i)
+    lt = len(_testing_indices)
     iii = 0
     jjj = 0
     for ii in range(0,d):
-        if ii < testing_indices_[0] or ii > testing_indices_[lt-1]:
+        if ii < _testing_indices[0] or ii > _testing_indices[lt-1]:
             jjj = 0
             for jj in range(0,d):
-                if jj < testing_indices_[0] or jj > testing_indices_[lt-1]:
-                    dm_train_[iii][jjj] = dm_[ii][jj]
+                if jj < _testing_indices[0] or jj > _testing_indices[lt-1]:
+                    _dm_train[iii][jjj] = _dm[ii][jj]
                     jjj = jjj + 1
                     #print("jjj: ", jjj)
             iii = iii + 1
             #print("iii: ", iii)
-    return dm_train_
+    return _dm_train
 
 def get_testing_indices(_i):
     index_start = _i*len_portion
@@ -110,7 +110,18 @@ def neg_cv_score(alpha=1., beta=0., k=5):
 
         print(dm_train)
         # do clustering using the assigned k, output: list of {set of indices belonging to same cluster}
-        kmeans_instance = kmeans(dm_train, None, k, 0.025)
+
+        float_dm_train = []
+        for row in range(len(dm_train)):
+            row_value = []
+            for col in range(len(dm_train[0])):
+                row_value.append(float(dm_train[row][col]))
+            float_dm_train.append(row_value)
+
+        print(float_dm_train)
+        # kmeans_instance = kmeans(dm_train, None, k, 0.025)
+
+        kmeans_instance = kmeans(float_dm_train, None, k, 0.025)
         clusters = kmeans_instance.get_clusters()
         centers = kmeans_instance.get_centers()
         print ("clusters: ", clusters)
