@@ -89,7 +89,7 @@ class kmeans:
 
         """
 
-        print("Revise xmeans code to take gram matrix as input!");
+        print("Revise xmeans code to take DISTANCE matrix as input!");
 
         # self.__pointer_data = data;
         # [Marco Revise] Instead of coordinates data points, this is gram matrix

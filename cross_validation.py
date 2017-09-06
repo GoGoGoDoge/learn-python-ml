@@ -122,9 +122,11 @@ def neg_cv_score(alpha=1., beta=0., k=5):
         # kmeans_instance = kmeans(dm_train, None, k, 0.025)
 
         kmeans_instance = kmeans(float_dm_train, None, 2*k, 0.025)
+        kmeans_instance.process()
         clusters = kmeans_instance.get_clusters()
         centers = kmeans_instance.get_centers()
         print("clusters: ", clusters)
+        print("centers: ", centers)
         input("enter something...")
         print("clusters[1][2]: ", clusters[1][2])
         print("clusters[1][3]: ", clusters[1][3])
@@ -193,7 +195,11 @@ def neg_cv_score(alpha=1., beta=0., k=5):
         and hence, appears exactly one in some element of the unified matrix.
         Therefore, the unified confusion matrix looks as if the entire dataset were used as a test dataset.
         '''
-        confusion_mat_sum = confusion_mat_sum + confusion_mat[i]
+        ##confusion_mat_sum = confusion_mat_sum + confusion_mat[i]
+        for sum_i in range(0,2):
+            for sum_j in range(0,2):
+                confusion_mat_sum[sum_i][sum_j] = confusion_mat_sum[sum_i][sum_j] + confusion_mat[i][sum_i][sum_j]
+
     # then compute the score using the combined confusion matrix, e.g. use accuracy.
     accuracy = (confusion_mat_sum[0][0]+confusion_mat_sum[1][1])/(confusion_mat_sum[0][0]+confusion_mat_sum[0][1]+confusion_mat_sum[1][0]+confusion_mat_sum[1][1])
     return -accuracy
