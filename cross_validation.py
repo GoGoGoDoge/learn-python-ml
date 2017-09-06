@@ -97,13 +97,13 @@ def neg_cv_score(alpha=1., beta=0., k=5):
             # gm[i][j] = get_elmnt(i, j).subs([(x,alpha), (y,beta)])
     print(gm)
     dm = innerP2distance(gm) # this is the pairwise distance matrix
-    print("size of dm:", len(dm[0][:]), len(dm))
+    print( "size of dm:", len(dm[0][:]), len(dm) )
     confusion_mat = {}
     confusion_mat_sum = [[0,0],[0,0]]
     for i in range(0,cv):
         print("No. i fold: ", i)
         dm_train = partition2train(dm, i) # a sub matrix extracted from the dm
-        print("size of dm_train:", len(dm_train[0][:]), dm_train(dm))
+        print("size of dm_train:", len(dm_train[0][:]), len(dm_train(dm)) )
         test_indices = get_testing_indices(i) # array of indices of the testing data points
         confusion_mat[i] = [[0,0],[0,0]] # [ [TN, FP], [FN, TP] ]
 
@@ -111,7 +111,6 @@ def neg_cv_score(alpha=1., beta=0., k=5):
         kmeans_instance = kmeans(dm_train, None, k, 0.025)
         clusters = kmeans_instance.get_clusters()
         centers = kmeans_instance.get_centers()
-        
         print ("clusters:", clusters)
         print("clusters[1][2]: ", clusters[1][2])
         print("clusters[1][3]: ", clusters[1][3])
