@@ -62,14 +62,14 @@ def partition2train(dm_, _i):
     jjj = 0
     for ii in range(0,d):
         if ii < testing_indices_[0] or ii > testing_indices_[lt-1]:
+            jjj = 0
             for jj in range(0,d):
                 if jj < testing_indices_[0] or jj > testing_indices_[lt-1]:
                     dm_train_[iii][jjj] = dm_[ii][jj]
                     jjj = jjj + 1
-                    print("jjj: ", jjj)
+                    #print("jjj: ", jjj)
             iii = iii + 1
-            print("iii: ", iii)
-            jjj = 0
+            #print("iii: ", iii)
     return dm_train_
 
 def get_testing_indices(_i):
@@ -107,6 +107,7 @@ def neg_cv_score(alpha=1., beta=0., k=5):
         test_indices = get_testing_indices(i) # array of indices of the testing data points
         confusion_mat[i] = [[0,0],[0,0]] # [ [TN, FP], [FN, TP] ]
 
+        print(dm_train)
         # do clustering using the assigned k, output: list of {set of indices belonging to same cluster}
         kmeans_instance = kmeans(dm_train, None, k, 0.025)
         clusters = kmeans_instance.get_clusters()
