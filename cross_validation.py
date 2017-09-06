@@ -92,7 +92,7 @@ def neg_cv_score(alpha=1., beta=0., k=5):
     gm = [[0 for aa in range(d)] for bb in range(d)]
     for i in range(d):
         for j in range(d):
-            gm[i][j] = get_elmnt_and_sub(i, j, alpha, beta)
+            gm[i][j] = float(get_elmnt_and_sub(i, j, alpha, beta))
             # gm[i][j] = float(get_elmnt(i, j).subs([(x,alpha), (y,beta)]))
             # gm[i][j] = get_elmnt(i, j).subs([(x,alpha), (y,beta)])
     print(gm)
@@ -103,7 +103,7 @@ def neg_cv_score(alpha=1., beta=0., k=5):
     for i in range(0,cv):
         print("No. i fold: ", i)
         dm_train = partition2train(dm, i) # a sub matrix extracted from the dm
-        print("size of dm_train:", len(dm_train[0][:]), len(dm_train) )
+        print("size of dm_train: ", len(dm_train[0][:]), len(dm_train) )
         test_indices = get_testing_indices(i) # array of indices of the testing data points
         confusion_mat[i] = [[0,0],[0,0]] # [ [TN, FP], [FN, TP] ]
 
@@ -112,7 +112,7 @@ def neg_cv_score(alpha=1., beta=0., k=5):
         kmeans_instance = kmeans(dm_train, None, k, 0.025)
         clusters = kmeans_instance.get_clusters()
         centers = kmeans_instance.get_centers()
-        print ("clusters:", clusters)
+        print ("clusters: ", clusters)
         print("clusters[1][2]: ", clusters[1][2])
         print("clusters[1][3]: ", clusters[1][3])
         # use known labels to vote for the label of the cluster

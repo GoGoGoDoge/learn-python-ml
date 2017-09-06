@@ -12,8 +12,8 @@ import sympy
 # from sklearn.model_selection import cross_val_score
 # from sklearn import svm
 # import numpy as np
-import GPy
-import GPyOpt
+#import GPy
+#import GPyOpt
 
 
 p=re.compile(r'(\d)([xy])')
