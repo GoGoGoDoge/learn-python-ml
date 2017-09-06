@@ -113,9 +113,12 @@ def neg_cv_score(alpha=1., beta=0., k=5):
 
         # use known labels to vote for the label of the cluster
         nClusters = len(centers)
+        print("Number of cluster is: ", nClusters)
         cluster_labels = [0 for x in range(nClusters)]
         for i in range(0, nClusters):
-            nPoints = len(clusters[i][:])
+            print("For the ith cluster: ", i)
+            nPoints = len(clusters[i])
+            print("     Number of points in current cluster: ", nPoints)
             nPos = 0
             nNeg = 0
             for j in range(0, nPoints):
