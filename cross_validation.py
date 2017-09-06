@@ -121,7 +121,7 @@ def neg_cv_score(alpha=1., beta=0., k=5):
         print(float_dm_train)
         # kmeans_instance = kmeans(dm_train, None, k, 0.025)
 
-        kmeans_instance = kmeans(float_dm_train, None, k, 0.025)
+        kmeans_instance = kmeans(float_dm_train, None, 2*k, 0.025)
         clusters = kmeans_instance.get_clusters()
         centers = kmeans_instance.get_centers()
         print("clusters: ", clusters)
