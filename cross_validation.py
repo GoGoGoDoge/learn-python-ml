@@ -66,9 +66,9 @@ def partition2train(dm_, i_):
                 if jj < testing_indices_[0] or jj > testing_indices_[lt-1]:
                     dm_train_[iii][jjj] = dm_[ii][jj]
                     jjj = jjj + 1
-                    #print("jjj: ", jjj)
+                    print("jjj: ", jjj)
             iii = iii + 1
-            #print("iii: ", iii)
+            print("iii: ", iii)
             jjj = 0
     return dm_train_
 
@@ -103,6 +103,7 @@ def neg_cv_score(alpha=1., beta=0., k=5):
     for i in range(0,cv):
         print("No. i fold: ", i)
         dm_train = partition2train(dm, i) # a sub matrix extracted from the dm
+        print("size of dm_train:", len(dm_train[0][:]), dm_train(dm))
         test_indices = get_testing_indices(i) # array of indices of the testing data points
         confusion_mat[i] = [[0,0],[0,0]] # [ [TN, FP], [FN, TP] ]
 
@@ -110,7 +111,10 @@ def neg_cv_score(alpha=1., beta=0., k=5):
         kmeans_instance = kmeans(dm_train, None, k, 0.025)
         clusters = kmeans_instance.get_clusters()
         centers = kmeans_instance.get_centers()
-
+        
+        print ("clusters:", clusters)
+        print("clusters[1][2]: ", clusters[1][2])
+        print("clusters[1][3]: ", clusters[1][3])
         # use known labels to vote for the label of the cluster
         nClusters = len(centers)
         print("Number of cluster is: ", nClusters)
@@ -234,7 +238,10 @@ cv = 5
 len_portion = math.ceil(d/cv) # e.g. 134/5=27
 remain_portion_len = d - (cv-1)*len_portion # e.g. 26
 
-neg_cv_score(0.5, 0.3, 5)
+alpha = 0.5
+beta = 0.3
+number_cluster = 5
+neg_cv_score(alpha, beta, number_cluster)
 
 '''
 domain=[{'name':'alpha', 'type':'continuous', 'domain':(0,1)},
