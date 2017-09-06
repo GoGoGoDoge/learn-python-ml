@@ -51,7 +51,7 @@ def innerP2distance(gm_):
 
 
 def partition2train(dm_, _i):
-    if  < cv-1:
+    if _i < cv-1:
         dm_train_ = [[0 for aa in range(d-len_portion)] for bb in range(d-len_portion)]
     else:
         dm_train_ = [[0 for aa in range(d-remain_portion_len)] for bb in range(d-remain_portion_len)]
