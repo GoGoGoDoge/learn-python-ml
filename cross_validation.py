@@ -239,7 +239,7 @@ cv = 5
 modulus = d % cv
 len_portion = d / cv
 if modulus > 0:
-    len_portion = len_portion + 1
+    len_portion = int(len_portion + 1)
 # len_portion = int((float(d)/cv + 0.9999999) # e.g. 134/5=27
 remain_portion_len = d - (cv-1)*len_portion # e.g. 26
 
