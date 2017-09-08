@@ -126,7 +126,7 @@ def cv_score(alpha=1., beta=0., k=5):
         centers = kmeans_instance.get_centers()
         print("clusters: ", clusters)
         print("centers: ", centers)
-        input("finished clustering, enter something...")
+        #input("finished clustering, enter something...")
         #print("clusters[1][2]: ", clusters[1][2])
         #print("clusters[1][3]: ", clusters[1][3])
         # use known labels to vote for the label of the cluster
@@ -189,7 +189,7 @@ def cv_score(alpha=1., beta=0., k=5):
                     confusion_mat[i][0][0] = confusion_mat[i][0][0] + 1 # TN = confusion_mat[i][0][0]
 
         print("Confusion mat of current fold: ", confusion_mat[i])
-        input("enter sth to conntinue next fold...")
+        #input("enter sth to conntinue next fold...")
         # after all folds are done, add up the confusion_mat
         ##confusion_mat_sum = confusion_mat_sum + confusion_mat[i]
         for sum_i in range(0,2):
@@ -216,11 +216,16 @@ def neg_cv_score(x):
     n = x.shape[0]
     score = numpy.zeros(n)
     print("n is: ", n)
+
     for i in range(n):
         print("PARAS: i, alpha, beta, k ", i, alpha[i], beta[i], k[i])
+        n_set_paras = n_set_paras + 1
+        print("*******nth set of paras: ", n_set_paras)
+        print()
         score[i] = - cv_score(alpha[i], beta[i], k[i])
     return score
 
+n_set_paras = 0
 
 p=re.compile(r'(\d)([xy])')
 q=re.compile(r'xy')
@@ -284,8 +289,8 @@ domain=[{'name':'alpha', 'type':'continuous', 'domain':(0,1)},
 bo=GPyOpt.methods.BayesianOptimization(f=neg_cv_score,domain=domain)
     # bo=GPyOpt.methods.BayesianOptimization(f=neg_cv_score,domain=domain,acquisition_type='LCB')
     # bo.run_optimization(max_iter=30)
-bo.run_optimization(max_iter=3)
+bo.run_optimization(max_iter=20)
 
 bo.x_opt # Optimal solutions.
 bo.fx_opt # Found minimum values.
-print(x_opt)
+print(bo.x_opt)
