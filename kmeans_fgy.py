@@ -264,7 +264,7 @@ class kmeans:
 
         # [Marco revise] find the center point index with the minimum distance to all others
         for index in range(len(clusters)):
-            min_distance = numpy.Inf; #float('inf');
+            min_distance = -1 #numpy.Inf; #float('inf');
             cur_cluster = clusters[index];
             for i in range(len(cur_cluster)):
                 cur_distance_sum = 0.0;
@@ -272,9 +272,9 @@ class kmeans:
                     tmp = self.__dist_matrix[cur_cluster[i]][cur_cluster[j]]
                     tmp = tmp*tmp
                     cur_distance_sum = cur_distance_sum + tmp;
-                if cur_distance_sum < min_distance :
+                if min_distance < 0 or cur_distance_sum < min_distance :
                     min_distance = cur_distance_sum;
                     centers[index] = cur_cluster[i];
-
+            print(centers[index], cur_cluster)
 
         return centers;
