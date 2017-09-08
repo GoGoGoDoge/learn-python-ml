@@ -208,7 +208,7 @@ Note that every datum in a dataset is tested exactly one time through the entire
 and hence, appears exactly one in some element of the unified matrix.
 Therefore, the unified confusion matrix looks as if the entire dataset were used as a test dataset.
 '''
-n_set_paras = 0
+
 
 def neg_cv_score(x):
     # print('### neg_cv_score: {0}'.format(x))
@@ -219,8 +219,8 @@ def neg_cv_score(x):
 
     for i in range(n):
         print("PARAS: i, alpha, beta, k ", i, alpha[i], beta[i], k[i])
-        n_set_paras = n_set_paras + 1
-        print("******* nth set of paras: ", n_set_paras)
+        #n_set_paras = n_set_paras + 1
+        #print("******* nth set of paras: ", n_set_paras)
         print()
         score[i] = - cv_score(alpha[i], beta[i], k[i])
     return score
