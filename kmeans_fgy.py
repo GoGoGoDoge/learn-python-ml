@@ -193,8 +193,8 @@ class kmeans:
             clusters = [ cluster for cluster in clusters if len(cluster) > 0 ];
 
             updated_centers = self.__update_centers(clusters);
-            # print("debug clusters:", clusters)
-            # print("debug centers", updated_centers)
+            print("debug clusters:", clusters)
+            print("debug centers", updated_centers)
             # changes = max([euclidean_distance_sqrt(centers[index], updated_centers[index]) for index in range(len(updated_centers))]);    # Fast solution
 
             # [Marco Revise] to use gram matrix to Calculate distance instead of euclidean
