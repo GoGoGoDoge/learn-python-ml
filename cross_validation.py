@@ -3,7 +3,8 @@ import re
 from pyclustering.samples.definitions import SIMPLE_SAMPLES, FCPS_SAMPLES;
 
 # from pyclustering.cluster import cluster_visualizer;
-from kmeans_fgy import kmeans # , splitting_type
+# from kmeans_fgy import kmeans # , splitting_type
+from kmeans_marco import kmeans # , splitting_type
 from pyclustering.utils import read_sample, timedcall;
 import sympy
 # from sklearn.model_selection import cross_val_score
@@ -107,30 +108,21 @@ def cv_score(alpha=1., beta=0., k=5):
         test_indices = get_testing_indices(i) # array of indices of the testing data points
         confusion_mat[i] = [[0,0],[0,0]] # [ [TN, FP], [FN, TP] ]
 
-        # print(dm_train)
-        # do clustering using the assigned k, output: list of {set of indices belonging to same cluster}
-
-        #float_dm_train = []
-        #for row in range(len(dm_train)):
-        #    row_value = []
-        #    for col in range(len(dm_train[0])):
-        #        row_value.append(float(dm_train[row][col]))
-        #    float_dm_train.append(row_value)
-
         #print(float_dm_train)
-        kmeans_instance = kmeans(dm_train, None, 2*k, 0.025)
+        #kmeans_instance = kmeans(dm_train, None, 2*k, 0.025)
+        kmeans_instance = kmeans(gm, None, int(k), 0.025)
 
         #kmeans_instance = kmeans(float_dm_train, None, 2*k, 0.025)
         kmeans_instance.process()
         clusters = kmeans_instance.get_clusters()
-        centers = kmeans_instance.get_centers()
+
         print("clusters: ", clusters)
-        print("centers: ", centers)
+
         #input("finished clustering, enter something...")
         #print("clusters[1][2]: ", clusters[1][2])
         #print("clusters[1][3]: ", clusters[1][3])
         # use known labels to vote for the label of the cluster
-        nClusters = len(centers)
+        nClusters = len(clusters)
         print("Number of cluster is: ", nClusters)
         cluster_labels = [0 for x in range(nClusters)]
         for ic in range(0, nClusters):
@@ -206,6 +198,7 @@ def cv_score(alpha=1., beta=0., k=5):
     TPR = TP/(FN+TP)
     Precision = TP/(TP+FP)
     F = 2*(Precision*TPR)/(Precision+TPR)
+    print("Final F-measure for this set of parameter is: ", F)
     return F
 
 '''
@@ -222,13 +215,12 @@ def neg_cv_score(x):
     alpha, beta, k = x[:,0], x[:,1], x[:,2]
     n = x.shape[0]
     score = numpy.zeros(n)
-    print("n is: ", n)
+    # print("n is: ", n)
 
     for i in range(n):
         print("PARAS: i, alpha, beta, k ", i, alpha[i], beta[i], k[i])
         #n_set_paras = n_set_paras + 1
         #print("******* nth set of paras: ", n_set_paras)
-        print()
         score[i] = - cv_score(alpha[i], beta[i], k[i])
     return score
 
@@ -296,8 +288,9 @@ domain=[{'name':'alpha', 'type':'continuous', 'domain':(0,1)},
 bo=GPyOpt.methods.BayesianOptimization(f=neg_cv_score,domain=domain)
     # bo=GPyOpt.methods.BayesianOptimization(f=neg_cv_score,domain=domain,acquisition_type='LCB')
     # bo.run_optimization(max_iter=30)
-bo.run_optimization(max_iter=20)
+bo.run_optimization(max_iter=30)
 
 bo.x_opt # Optimal solutions.
 bo.fx_opt # Found minimum values.
 print(bo.x_opt)
+print(bo.fx_opt)

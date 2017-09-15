@@ -102,88 +102,35 @@ def cv_score(alpha=1., beta=0., k=5):
     confusion_mat_sum = [[0,0],[0,0]]
     for i in range(0,cv):
         print("No. i fold: ", i)
-        dm_train = partition2train(dm, i) # a sub matrix extracted from the dm
-        print("size of dm_train: ", len(dm_train[0][:]), len(dm_train) )
+        #dm_train = partition2train(dm, i) # a sub matrix extracted from the dm
+        #print("size of dm_train: ", len(dm_train[0][:]), len(dm_train) )
         test_indices = get_testing_indices(i) # array of indices of the testing data points
         confusion_mat[i] = [[0,0],[0,0]] # [ [TN, FP], [FN, TP] ]
-
-        # print(dm_train)
-        # do clustering using the assigned k, output: list of {set of indices belonging to same cluster}
-
-        #float_dm_train = []
-        #for row in range(len(dm_train)):
-        #    row_value = []
-        #    for col in range(len(dm_train[0])):
-        #        row_value.append(float(dm_train[row][col]))
-        #    float_dm_train.append(row_value)
-
-        #print(float_dm_train)
-        kmeans_instance = kmeans(dm_train, None, 2*k, 0.025)
-
-        #kmeans_instance = kmeans(float_dm_train, None, 2*k, 0.025)
-        kmeans_instance.process()
-        clusters = kmeans_instance.get_clusters()
-        centers = kmeans_instance.get_centers()
-        print("clusters: ", clusters)
-        print("centers: ", centers)
-        #input("finished clustering, enter something...")
-        #print("clusters[1][2]: ", clusters[1][2])
-        #print("clusters[1][3]: ", clusters[1][3])
-        # use known labels to vote for the label of the cluster
-        nClusters = len(centers)
-        print("Number of cluster is: ", nClusters)
-        cluster_labels = [0 for x in range(nClusters)]
-        for ic in range(0, nClusters):
-            print("For the ith cluster: ", ic)
-            nPoints = len(clusters[ic])
-            print("     Number of points in current cluster: ", nPoints)
-            nPos = 0
-            nNeg = 0
-            for jc in range(0, nPoints):
-                if labels[clusters[ic][jc]] == "+1":
-                    nPos = nPos + 1
-                else:
-                    nNeg = nNeg + 1
-            print("For i th cluster, +1 v.s. -1 is: ", ic, nPos, nNeg)
-            if nPos > nNeg:
-                cluster_labels[ic] = 1
-            else:
-                cluster_labels[ic] = -1
-
-        print("Labels of the clusters: ", cluster_labels)
 
         # do testing by finding the nearest cluster for the remaining points
         print("The test indices are: ", test_indices)
         for test_i in test_indices:
-            min_distance = numpy.Inf
-            min_dist_cluster_idx = -1
-            dist_2_cluster = 0
-            for ii in range(0, nClusters):
-                cur_cluster = clusters[ii][:];
-                nPointsInCluster = len(cur_cluster)
-                for jj in range(0, nPointsInCluster):
-                    tmp = dm[test_i][cur_cluster[jj]]
-                    tmp = tmp*tmp
-                    dist_2_cluster = dist_2_cluster + tmp
-                dist_2_cluster = numpy.sqrt(dist_2_cluster)
-                dist_2_cluster = dist_2_cluster/nPointsInCluster
+            all_neighbours = dm[test_i]
+            c = sorted(range(d), key=lambda p: all_neighbours[p])
+            #print(c)
+            knn = c[1:int(k+1)] # indices of the k nearest points
+            nPos = 0;
+            nNeg = 0;
+            for nn in knn:
+                if labels[nn] == "+1":
+                    nPos = nPos + 1
+                else:
+                    nNeg = nNeg + 1
 
-                if dist_2_cluster < min_distance:
-                    min_distance = dist_2_cluster
-                    min_dist_cluster_idx = ii
-            # determine whether this test data is fp, fn, tp, tn and add to the confusion_mat
-            print(test_i)
-            print("Label of this test point: ", labels[test_i])
-            print("Idx of the nearest cluster: ", min_dist_cluster_idx)
-            print("Label of the nearest cluster: ", cluster_labels[min_dist_cluster_idx])
-            #print(confusion_mat[i])
+            print("Among the neighbours of this test point, nPos v.s. nNeg is: ", nPos, nNeg)
+
             if labels[test_i] == "+1":
-                if cluster_labels[min_dist_cluster_idx] == 1:
+                if nPos > nNeg:
                     confusion_mat[i][1][1] = confusion_mat[i][1][1] + 1 # TP = confusion_mat[i][1][1]
                 else:
                     confusion_mat[i][1][0] = confusion_mat[i][1][0] + 1 # FN = confusion_mat[i][1][0]
             else:
-                if cluster_labels[min_dist_cluster_idx] == 1:
+                if nPos > nNeg:
                     confusion_mat[i][0][1] = confusion_mat[i][0][1] + 1 # FP = confusion_mat[i][0][1]
                 else:
                     confusion_mat[i][0][0] = confusion_mat[i][0][0] + 1 # TN = confusion_mat[i][0][0]
@@ -206,6 +153,7 @@ def cv_score(alpha=1., beta=0., k=5):
     TPR = TP/(FN+TP)
     Precision = TP/(TP+FP)
     F = 2*(Precision*TPR)/(Precision+TPR)
+    print("Final F-measure for this set of parameter is: ", F)
     return F
 
 '''
@@ -222,13 +170,12 @@ def neg_cv_score(x):
     alpha, beta, k = x[:,0], x[:,1], x[:,2]
     n = x.shape[0]
     score = numpy.zeros(n)
-    print("n is: ", n)
+    # print("n is: ", n)
 
     for i in range(n):
         print("PARAS: i, alpha, beta, k ", i, alpha[i], beta[i], k[i])
         #n_set_paras = n_set_paras + 1
         #print("******* nth set of paras: ", n_set_paras)
-        print()
         score[i] = - cv_score(alpha[i], beta[i], k[i])
     return score
 
@@ -289,15 +236,16 @@ number_cluster = 5
 
 domain=[{'name':'alpha', 'type':'continuous', 'domain':(0,1)},
         {'name':'beta', 'type':'continuous', 'domain':(0,1)},
-        {'name':'k', 'type':'discrete', 'domain':(2,10)}]
+        {'name':'k', 'type':'discrete', 'domain':(2,20)}]
 #        {'name':'normal', 'type':'discrete', 'domain':(1,1)},
 #        {'name':'kernel', 'type':'discrete', 'domain':(0,1)},
 #        {'name':'gamma', 'type':'continuous', 'domain':(1.0e-3,1.0e3)}]
 bo=GPyOpt.methods.BayesianOptimization(f=neg_cv_score,domain=domain)
     # bo=GPyOpt.methods.BayesianOptimization(f=neg_cv_score,domain=domain,acquisition_type='LCB')
     # bo.run_optimization(max_iter=30)
-bo.run_optimization(max_iter=20)
+bo.run_optimization(max_iter=30)
 
 bo.x_opt # Optimal solutions.
 bo.fx_opt # Found minimum values.
 print(bo.x_opt)
+print(bo.fx_opt)
