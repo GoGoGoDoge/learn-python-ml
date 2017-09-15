@@ -262,12 +262,14 @@ class xmeans:
 
             updated_centers = self.__update_centers(clusters);
             # print("debug clusters:", clusters)
-            # print("debug centers", updated_centers)
+
             # changes = max([euclidean_distance_sqrt(centers[index], updated_centers[index]) for index in range(len(updated_centers))]);    # Fast solution
 
             # [Marco Revise] to use gram matrix to Calculate distance instead of euclidean
             changes = max([self.__gram_matrix_distance_sqrt(centers[index], updated_centers[index]) for index in range(len(updated_centers))]);    # Fast solution
-
+            print("debug original centers", centers)
+            print("debug updated centers", updated_centers)
+            print("current changes are:", changes)
             centers = updated_centers;
 
         return (clusters, centers);
