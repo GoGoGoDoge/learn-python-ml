@@ -202,6 +202,8 @@ class kmeans:
                 current_record = max(current_record, numpy.sqrt(tmp));
             #Stop by the biggest gap
             changes = numpy.fabs(current_record - last_record);
+            print("Current Iterations", iters)
+            print("Changes", changes)
             last_record = current_record;
             last_clusters = clusters
             iters = iters + 1
@@ -265,7 +267,7 @@ class kmeans:
             bypass = available_indexes;
 
         clusters = [[] for i in range(len(last_clusters))];
-        
+
         for index_point in bypass:
             index_optim = -1;
             dist_optim = 0.0;
