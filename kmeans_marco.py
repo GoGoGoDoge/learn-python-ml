@@ -80,7 +80,7 @@ class kmeans:
 
     """
 
-    def __init__(self, data, initial_centers = None, k = 3, tolerance = 0.025):
+    def __init__(self, data, initial_centers = None, k = 3, tolerance = 0.025, iterations_time = 20):
         """!
         @brief Constructor of clustering algorithm X-Means.
 
@@ -94,12 +94,13 @@ class kmeans:
 
         """
 
-        print("Revise xmeans code to take DISTANCE matrix as input!");
+        #print("Revise xmeans code to take DISTANCE matrix as input!");
 
         self.__gram_matrix = data;
 
         # All calculation is only based on cluster, there will be no center for this Kernel Solution
         self.__clusters = [];
+        self.__iterations_time = iterations_time;
 
         # To initial we dedicated randomly selected point for clusters
         init_clusters_points =  random.sample(range(len(data[0])), min(len(data[0]), min(len(data[0]), int(k))));
@@ -107,7 +108,7 @@ class kmeans:
         for i in range(len(init_clusters_points)):
             self.__last_clusters[i].append(init_clusters_points[i])
 
-        print ("debug initial:", self.__last_clusters);
+        # print ("debug initial:", self.__last_clusters);
         # This is dedicated
         self.__k = k;
         self.__tolerance = tolerance;
@@ -176,7 +177,11 @@ class kmeans:
 
         clusters = [];
 
-        while (changes > stop_condition):
+        last_record = -1;
+
+        iters = 0
+
+        while (last_record == -1 or changes > stop_condition):
             clusters = self.__update_clusters(last_clusters, available_indexes);
             clusters = [ cluster for cluster in clusters if len(cluster) > 0 ];
 
@@ -188,15 +193,19 @@ class kmeans:
             # changes = max([euclidean_distance_sqrt(centers[index], updated_centers[index]) for index in range(len(updated_centers))]);    # Fast solution
 
             # [Update] Converge Condition, get the maximum value for every point in the same clusters, get the maximum value among all cluster as the change
-            changes = 0
+            current_record = 0
             for current_cluster in clusters:
                 tmp = 0
                 for point in current_cluster:
                     tmp = max(tmp, self.__kernel_distance(point, current_cluster));
-                changes = max(changes, tmp);
-
+                    # print("scores:", tmp)
+                current_record = max(current_record, numpy.sqrt(tmp));
+            #Stop by the biggest gap
+            changes = numpy.fabs(current_record - last_record);
+            last_record = current_record;
             last_clusters = clusters
-
+            iters = iters + 1
+        # print ("total iterations:", iters);
         return (clusters);
 
     def __kernel_distance(self, point, cluster):
@@ -213,10 +222,17 @@ class kmeans:
         n = len(cluster);
         gram_distance = 0.0
         point_distance = 0.0
+        # print("cluster input", len(cluster))
+
+        for i in range(len(cluster)):
+            for j in range(len(cluster)):
+                gram_distance += self.__gram_matrix_distance(cluster[i], cluster[j]);
+
         for idx in cluster:
-            gram_distance += self.__gram_matrix_distance(idx, idx);
             point_distance += self.__gram_matrix_distance(idx, point);
-        res = gram_distance / n / n + self.__gram_matrix_distance(point, point) - 2 * point_distance / n;
+
+        # print("distance:", gram_distance, point_distance);
+        res = float(gram_distance) / n / n + float(self.__gram_matrix_distance(point, point)) - 2 * float(point_distance) / n;
         # print ("debug kernel distance:", res);
         return res;
 
@@ -249,6 +265,7 @@ class kmeans:
             bypass = available_indexes;
 
         clusters = [[] for i in range(len(last_clusters))];
+
         for index_point in bypass:
             index_optim = -1;
             dist_optim = 0.0;
@@ -258,7 +275,7 @@ class kmeans:
                 # dist = euclidean_distance_sqrt(self.__pointer_data[index_point], centers[index]);      # Fast solution
                 # [Marco revise] : I will use Fast solution but change the dict is represented by gram_matrix
                 dist = self.__kernel_distance(index_point,last_clusters[index]);
-                if ( (dist < dist_optim) or (index_optim is -1)):
+                if ( (dist < dist_optim) or (index_optim < 0)):
                     index_optim = index;
                     dist_optim = dist;
 

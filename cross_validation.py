@@ -89,46 +89,47 @@ def cv_score(alpha=1., beta=0., k=5):
     # The gram matrix 'gm' is generated from 'get_elmnt'.
     # The number of folds is specified by the variable 'cv'.
     '''
-    print("This is neg_cv_score, alpha = ", alpha, "beta = ", beta, "k = ", k)
+    # print("This is neg_cv_score, alpha = ", alpha, "beta = ", beta, "k = ", k)
     gm = [[0 for aa in range(d)] for bb in range(d)]
     for i in range(d):
         for j in range(d):
             gm[i][j] = float(get_elmnt_and_sub(i, j, alpha, beta))
             # gm[i][j] = float(get_elmnt(i, j).subs([(x,alpha), (y,beta)]))
             # gm[i][j] = get_elmnt(i, j).subs([(x,alpha), (y,beta)])
-    #print(gm)
+    # print(gm)
     dm = innerP2distance(gm) # this is the pairwise distance matrix
-    print( "size of dm:", len(dm[0][:]), len(dm) )
+    # print( "size of dm:", len(dm[0][:]), len(dm) )
     confusion_mat = {}
     confusion_mat_sum = [[0,0],[0,0]]
     for i in range(0,cv):
-        print("No. i fold: ", i)
-        dm_train = partition2train(dm, i) # a sub matrix extracted from the dm
-        print("size of dm_train: ", len(dm_train[0][:]), len(dm_train) )
+        print("----No. i fold: ", i)
+        #dm_train = partition2train(dm, i) # a sub matrix extracted from the dm
+        gm_train = partition2train(gm, i) # a sub matrix extracted from the dm
+        #print("size of dm_train: ", len(dm_train[0][:]), len(dm_train) )
         test_indices = get_testing_indices(i) # array of indices of the testing data points
         confusion_mat[i] = [[0,0],[0,0]] # [ [TN, FP], [FN, TP] ]
 
-        #print(float_dm_train)
+        # print(gm_train)
         #kmeans_instance = kmeans(dm_train, None, 2*k, 0.025)
-        kmeans_instance = kmeans(gm, None, int(k), 0.025)
+        kmeans_instance = kmeans(gm_train, None, int(k), 0.025)
 
         #kmeans_instance = kmeans(float_dm_train, None, 2*k, 0.025)
         kmeans_instance.process()
         clusters = kmeans_instance.get_clusters()
 
-        print("clusters: ", clusters)
+        #print("clusters: ", clusters)
 
         #input("finished clustering, enter something...")
         #print("clusters[1][2]: ", clusters[1][2])
         #print("clusters[1][3]: ", clusters[1][3])
         # use known labels to vote for the label of the cluster
         nClusters = len(clusters)
-        print("Number of cluster is: ", nClusters)
+        print("----Number of cluster is: ", nClusters)
         cluster_labels = [0 for x in range(nClusters)]
         for ic in range(0, nClusters):
-            print("For the ith cluster: ", ic)
+            # print("For the ith cluster: ", ic)
             nPoints = len(clusters[ic])
-            print("     Number of points in current cluster: ", nPoints)
+            # print("     Number of points in current cluster: ", nPoints)
             nPos = 0
             nNeg = 0
             for jc in range(0, nPoints):
@@ -136,16 +137,16 @@ def cv_score(alpha=1., beta=0., k=5):
                     nPos = nPos + 1
                 else:
                     nNeg = nNeg + 1
-            print("For i th cluster, +1 v.s. -1 is: ", ic, nPos, nNeg)
+            # print("For i th cluster, +1 v.s. -1 is: ", ic, nPos, nNeg)
             if nPos > nNeg:
                 cluster_labels[ic] = 1
             else:
                 cluster_labels[ic] = -1
 
-        print("Labels of the clusters: ", cluster_labels)
+        # print("Labels of the clusters: ", cluster_labels)
 
         # do testing by finding the nearest cluster for the remaining points
-        print("The test indices are: ", test_indices)
+        # print("The test indices are: ", test_indices)
         for test_i in test_indices:
             min_distance = numpy.Inf
             min_dist_cluster_idx = -1
@@ -164,10 +165,10 @@ def cv_score(alpha=1., beta=0., k=5):
                     min_distance = dist_2_cluster
                     min_dist_cluster_idx = ii
             # determine whether this test data is fp, fn, tp, tn and add to the confusion_mat
-            print(test_i)
-            print("Label of this test point: ", labels[test_i])
-            print("Idx of the nearest cluster: ", min_dist_cluster_idx)
-            print("Label of the nearest cluster: ", cluster_labels[min_dist_cluster_idx])
+            #print(test_i)
+            #print("Label of this test point: ", labels[test_i])
+            #print("Idx of the nearest cluster: ", min_dist_cluster_idx)
+            #print("Label of the nearest cluster: ", cluster_labels[min_dist_cluster_idx])
             #print(confusion_mat[i])
             if labels[test_i] == "+1":
                 if cluster_labels[min_dist_cluster_idx] == 1:
@@ -180,14 +181,14 @@ def cv_score(alpha=1., beta=0., k=5):
                 else:
                     confusion_mat[i][0][0] = confusion_mat[i][0][0] + 1 # TN = confusion_mat[i][0][0]
 
-        print("Confusion mat of current fold: ", confusion_mat[i])
+        print("----Confusion mat of current fold: ", confusion_mat[i])
         #input("enter sth to conntinue next fold...")
         # after all folds are done, add up the confusion_mat
         ##confusion_mat_sum = confusion_mat_sum + confusion_mat[i]
         for sum_i in range(0,2):
             for sum_j in range(0,2):
                 confusion_mat_sum[sum_i][sum_j] = confusion_mat_sum[sum_i][sum_j] + confusion_mat[i][sum_i][sum_j]
-        print("End of i th fold. ", i)
+        print("----End of i th fold. ", i)
     # then compute the score using the combined confusion matrix, e.g. use accuracy.
     TN = confusion_mat_sum[0][0]
     FP = confusion_mat_sum[0][1]
@@ -285,6 +286,8 @@ domain=[{'name':'alpha', 'type':'continuous', 'domain':(0,1)},
 #        {'name':'normal', 'type':'discrete', 'domain':(1,1)},
 #        {'name':'kernel', 'type':'discrete', 'domain':(0,1)},
 #        {'name':'gamma', 'type':'continuous', 'domain':(1.0e-3,1.0e3)}]
+
+#constrains=[{'name':'const1', 'constrain':'-x[:,0]+x[:,1]'}]
 bo=GPyOpt.methods.BayesianOptimization(f=neg_cv_score,domain=domain)
     # bo=GPyOpt.methods.BayesianOptimization(f=neg_cv_score,domain=domain,acquisition_type='LCB')
     # bo.run_optimization(max_iter=30)
