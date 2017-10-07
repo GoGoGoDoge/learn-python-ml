@@ -211,7 +211,7 @@ def cv_score(alpha=1., beta=0., k=5):
         return 0
     Precision = TP/(TP+FP)
     F = 2*(Precision*TPR)/(Precision+TPR)
-    print(alpha, beta, k, F)
+    # print(alpha, beta, k, F)
     return F
 
 '''
@@ -288,14 +288,14 @@ if modulus > 0:
 # len_portion = int((float(d)/cv + 0.9999999) # e.g. 134/5=27
 remain_portion_len = d - (cv-1)*len_portion # e.g. 26
 
-k_max = [15,60,90]
+k_max = range(26,51) # set the range by your self!!!
 for k_ in k_max:
     domain=[{'name':'alpha', 'type':'continuous', 'domain':(0,1)},
             {'name':'beta', 'type':'continuous', 'domain':(0,1)},
-            {'name':'k', 'type':'discrete', 'domain':(3,k_)}]
+            {'name':'k', 'type':'discrete', 'domain':(2,k_)}]
 
     constrains=[{'name':'const1', 'constrain':'-x[:,0]+x[:,1]'}] # x>=y
-    print("k_max is: "+str(k_)+", WITH_ CONSTRAINT_")
+
     bo=GPyOpt.methods.BayesianOptimization(f=neg_cv_score,domain=domain,constrains=constrains)
 #bo=GPyOpt.methods.BayesianOptimization(f=neg_cv_score,domain=domain)
 
@@ -305,14 +305,5 @@ for k_ in k_max:
 
     #bo.x_opt # Optimal solutions.
     #bo.fx_opt # Found minimum values.
-    print(bo.x_opt)
-    print(bo.fx_opt)
-########
-    print("k_max is: "+str(k_)+", WITHOUT_ CONSTRAINT_")
-    bo=GPyOpt.methods.BayesianOptimization(f=neg_cv_score,domain=domain)
-    bo.run_optimization(max_iter=100)
-
-    #bo.x_opt # Optimal solutions.
-    #bo.fx_opt # Found minimum values.
-    print(bo.x_opt)
-    print(bo.fx_opt)
+    print(str(bo.x_opt[0]) + "," + str(bo.x_opt[1]) + "," + str(bo.x_opt[2]) + "," + str(bo.fx_opt))
+    #print(bo.fx_opt)
