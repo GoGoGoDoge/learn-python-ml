@@ -305,5 +305,5 @@ for k_ in k_max:
 
     #bo.x_opt # Optimal solutions.
     #bo.fx_opt # Found minimum values.
-    print(str(bo.x_opt[0]) + "," + str(bo.x_opt[1]) + "," + str(bo.x_opt[2]) + "," + str(bo.fx_opt))
+    print(str(bo.x_opt[0]) + "," + str(bo.x_opt[1]) + "," + str(bo.x_opt[2]) + "," + str(bo.fx_opt[0]))
     #print(bo.fx_opt)
